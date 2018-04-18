@@ -1,0 +1,47 @@
+.line {
+	fill: none;
+	stroke: #990000;
+	stroke-width: 3;
+}
+
+.cpline {
+    fill: none;
+    stroke: #ff961b;
+    stroke-width: 3;
+}
+
+.point {
+	fill: none;
+	stroke: #cc0000;
+}
+
+div.tooltip {	
+    		position: absolute;			
+   			text-align: left;			
+    		width: 300px;					
+    		height: 30px;					
+    		padding: 2px;				
+    		font: 12px sans-serif;		
+    		background: #ffd000;	
+    		border: 0px;		
+    		border-radius: 8px;			
+    		pointer-events: none;			
+		}
+
+div.lawdiv {
+		position: absolute;			
+   		text-align: left;			
+    	width: 300px;					
+    	height: 30px;					
+    	padding: 2px;				
+    	font: 12px sans-serif;		
+    	background: red;	
+    	border: 0px;		
+    	border-radius: 8px;			
+    	pointer-events: none;	
+
+}
+
+body {
+	background-color: #e6f4ff;
+}

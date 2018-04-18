@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Teacher Salary per County</title> 
+
+    <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+  </head>
+  <header>
+      <h1 style="font-family: sans-serif; text-align: center;">Teacher Salary per County</h1>
+  </header>
+  <style>
+  	#graph{
+  		position: fixed;
+  		bottom: -110px;
+  		right: -140px;
+  	}
+      .state-names {
+          font-family: sans-serif;
+          text-align: middle;
+          fill: black;
+          pointer-events: all;
+      }
+      .states {
+        stroke: black;
+        stroke-width: 2px;
+        fill: none;
+        pointer-events: all
+      }
+      .states :hover{
+        fill: black;
+        
+      }
+      /*From studio 5*/
+      div.tooltip {
+        position: absolute;
+        pointer-events: none;
+        text-align: center;
+        width: 200px;
+        height: 50px;
+        padding: 10px;
+        font: 12px sans-serif;
+        background: #D3D3D3;
+        stroke: black;
+        border-radius: 2px;
+        opacity: .9;
+      }
+      .timeline {
+        stroke: black;
+        stroke-width: 2px;
+      }
+  </style>
+  <body>
+      <div id="map" float:center; display: inline"></div>
+      <div id="graph" style="height: 500px; width: 750px; float:center; display: inline">
+        <select id="statePicker" style="display: none">
+  			<option value="AL">Alabama</option>
+  			<option value="AK">Alaska</option>
+  			<option value="AZ">Arizona</option>
+  			<option value="AR">Arkansas</option>
+  			<option value="CA">California</option>
+  			<option value="CO">Colorado</option>
+  			<option value="CT">Connecticut</option>
+  			<option value="DE">Delaware</option>
+  			<option value="DC">District Of Columbia</option>
+  			<option value="FL">Florida</option>
+  			<option value="GA">Georgia</option>
+  			<option value="HI">Hawaii</option>
+  			<option value="ID">Idaho</option>
+  			<option value="IL">Illinois</option>
+  			<option value="IN">Indiana</option>
+  			<option value="IA">Iowa</option>
+  			<option value="KS">Kansas</option>
+  			<option value="KY">Kentucky</option>
+  			<option value="LA">Louisiana</option>
+  			<option value="ME">Maine</option>
+  			<option value="MD">Maryland</option>
+  			<option value="MA">Massachusetts</option>
+  			<option value="MI">Michigan</option>
+  			<option value="MN">Minnesota</option>
+  			<option value="MS">Mississippi</option>
+  			<option value="MO">Missouri</option>
+  			<option value="MT">Montana</option>
+  			<option value="NE">Nebraska</option>
+  			<option value="NV">Nevada</option>
+  			<option value="NH">New Hampshire</option>
+  			<option value="NJ">New Jersey</option>
+  			<option value="NM">New Mexico</option>
+  			<option value="NY">New York</option>
+  			<option value="NC">North Carolina</option>
+  			<option value="ND">North Dakota</option>
+  			<option value="OH">Ohio</option>
+ 			<option value="OK">Oklahoma</option>
+  			<option value="OR">Oregon</option>
+  			<option value="PA">Pennsylvania</option>
+  			<option value="RI">Rhode Island</option>
+  			<option value="SC">South Carolina</option>
+  			<option value="SD">South Dakota</option>
+  			<option value="TN">Tennessee</option>
+  			<option value="TX">Texas</option>
+  			<option value="UT">Utah</option>
+  			<option value="VT">Vermont</option>
+  			<option value="VA">Virginia</option>
+  			<option value="WA">Washington</option>
+  			<option value="WV">West Virginia</option>
+  			<option value="WI">Wisconsin</option>
+  			<option value="WY">Wyoming</option>
+		</select> </div>
+      <script>
+        var width = 2500;
+        var height = 550;
+
+          // Referenced Mike Bostock's exanple on bl.ocks
+          var projection = d3.geoAlbersUsa()
+              .scale(1000)
+              .translate([500 , height / 2]);
+
+          var path = d3.geoPath()
+                          .projection(projection);
+
+          var svg = d3.select("#map")
+                      .append("svg")
+                      .attr("width", width)
+                      .attr("height", height);
+                        
+          // Tooltip code from Piazza
+          var tooltip = d3.select("#map")
+                          .append("div")
+                          .attr("class", "tooltip");
+        
+          var stateInfo = [];
+		  
+		  var legendRange = [1, 2, 3, 4, 5, 6, 7, 8];
+          var legendLabels = ["$40-45k", "45-50k", "50-55k", "55-60k", "60-65k", "65-70k", "70-75k", "75-80k"]
+          var legendColors = d3.scaleOrdinal()
+              .range(["#e0f2f9", "#9CDFF9", "#70d7ff", "#3bb0dd", "#199fd3", "#0291c9", "#025d7f", "#023448"]);
+          
+          var legend = svg.selectAll("g.legend")
+              .data(legendRange)
+              .enter().append("g")
+              .attr("class", "legend");
+
+              var rectW = 30, rectH = 30;
+
+              legend.append("rect")
+              .attr("x", 0)
+              .attr("y", function(d, i){
+              return 300 - (i*rectH) - 2*rectH; 
+              })
+              .attr("width", rectW)
+              .attr("height", rectH)
+              .style("fill", legendColors)
+
+              legend.append("text")
+              .attr("x", 44)
+              .attr("y", function(d, i){ 
+              return 300 - (i*rectH) - rectH - 6;
+              })
+              .text(function(d, i){ 
+              return legendLabels[i]; 
+              });                
+          
+          d3.json("us.json", function(map) {
+            var data = topojson.feature(map, map.objects.states).features;
+            d3.csv("12-17salarydata.csv", function(salaryData) {
+              d3.tsv("us-state-names.tsv", function(genStateInfo) {
+                  genStateInfo.forEach(function(d, i) {
+                    stateInfo.push({'id' : genStateInfo[i].id, 
+                                    'code' : genStateInfo[i].code, 
+                                    'name': genStateInfo[i].name});
+                  });
+                  salaryData.forEach(function(d, i) {
+                  	for (var j = 0; j < stateInfo.length; j++) {
+                  		if (salaryData[i].State == stateInfo[j].code) {
+                  			stateInfo[j].State = salaryData[i].State;
+                  			stateInfo[j].Year_2017 = salaryData[i].Year_2017;
+                  			stateInfo[j].Year_2016 = salaryData[i].Year_2016;
+                  			stateInfo[j].Year_2015 = salaryData[i].Year_2015;
+                  			stateInfo[j].Year_2014 = salaryData[i].Year_2014;
+                  			stateInfo[j].Year_2013 = salaryData[i].Year_2013;
+                  		}
+                  	}
+                  });
+
+                  svg.append("g")
+                    .attr("class", "states")
+                    .selectAll("path")
+                    .data(data)
+                    .enter()
+                    .append("path")
+                    .attr("d", path)
+                    
+                    .attr("fill", function(data) {
+                      var salary;
+
+                      for (var i = 0; i < stateInfo.length; i++) {
+                        // console.log(stateInfo[i].id == data.id);
+                        if (stateInfo[i].id == data.id) {
+                          salary = stateInfo[i].Year_2017;
+                          if ((salary > 40000) && (salary < 45000)) {
+                            return "#e0f2f9";
+                          } else if ((salary > 45000) && (salary <= 50000)) {
+                            return "#9CDFF9";
+                          } else if ((salary > 50000) && (salary <= 55000)) {
+                            return "#70d7ff";
+                          } else if ((salary > 55000) && (salary <= 60000)) {
+                            return "#3bb0dd";
+                          } else if ((salary > 60000) && (salary <= 65000)) {
+                            return "#199fd3";
+                          } else if ((salary > 65000) && (salary <= 70000)) {
+                            return "#0291c9";
+                          } else if ((salary > 70000) && (salary <= 75000)) {
+                            return "#025d7f";
+                          } else if ((salary > 70000) && (salary <= 80000)) {
+                            return "#023448";
+                          }   
+                        }
+                      }
+                    })
+                
+                    // Tooltip reference from Piazza
+                    .on("mousemove", function(data) {
+                      var tooltipState;
+                      var tooltip2017;
+                     
+                      for (var i = 0; i < stateInfo.length; i++) {
+                        if (stateInfo[i].id == data.id) {
+                          tooltipState = stateInfo[i].State;
+                          tooltip2017 = stateInfo[i].Year_2017;
+                        }
+                      }
+
+                      tooltip.html(tooltipState + "\n" + "average teacher salary in 2017: $" + tooltip2017)
+                            .style("left", (d3.event.pageX) + "px")     
+                            .style("top", (d3.event.pageY ) + "px")
+                            .style("opacity", .9); 
+                    })
+                    .on("click", function(d){
+                      for (var i = 0; i < stateInfo.length; i++) {
+                        if (stateInfo[i].id == d.id) {
+                          var clickedState = stateInfo[i].State;
+                          showCountyMap(stateInfo[i].name); 
+                          console.log(clickedState);
+                          var picker = document.getElementById("statePicker");
+                          var opts = picker.options;
+                          for (var opt, j = 0; opt = opts[j]; j++) {
+                            if (opt.value == clickedState) {
+                                picker.selectedIndex = j;
+                                var event = new Event('change');
+                                picker.dispatchEvent(event);
+
+                                break;
+                          }
+                        }
+                          
+                        }
+                      }
+
+                    })
+                    .on("mouseout", function(d) {           
+                        tooltip.style("opacity", 0);    
+                    });
+                    
+                   svg.append("g")
+                    .attr("class")
+                    .selectAll("text")
+                    .data(data)
+                    .enter()
+                    .append("text")
+
+                    // centroid from bl.ocks
+                    .attr("x", function(d){
+                      return path.centroid(d)[0];
+                    })
+                    .attr("y", function(d){
+                      return  path.centroid(d)[1];
+                    });
+                 
+                });
+                
+            }); 
+          });
+  
+  function showCountyMap(state){
+	
+	if(state == "New York")
+	{
+		var url = "https://raw.githubusercontent.com/mattdellavolpe/US-Counties-TopoJSON/master/500k/new_york.json";
+	}   
+	else if(state == "New Hampshire")
+	{
+		var url = "https://raw.githubusercontent.com/mattdellavolpe/US-Counties-TopoJSON/master/500k/new_hampshire.json";
+	}   
+	else if(state == "New Jersey")
+	{
+		var url = "https://raw.githubusercontent.com/mattdellavolpe/US-Counties-TopoJSON/master/500k/new_jersey.json";
+	}   
+	else if(state == "Rhode Island")
+	{
+		var url = "https://raw.githubusercontent.com/mattdellavolpe/US-Counties-TopoJSON/master/500k/rhode_island.json";
+	}   
+	else if(state == "North Carolina")
+	{
+		var url = "https://raw.githubusercontent.com/mattdellavolpe/US-Counties-TopoJSON/master/500k/north_carolina.json";
+	}   
+	else if(state == "South Carolina")
+	{
+		var url = "https://raw.githubusercontent.com/mattdellavolpe/US-Counties-TopoJSON/master/500k/south_carolina.json"; 
+	}   
+	else if(state == "North Dakota")
+	{
+		var url = "https://raw.githubusercontent.com/mattdellavolpe/US-Counties-TopoJSON/master/500k/north_dakota.json";
+	}   
+	else if(state == "South Dakota")
+	{
+		var url = "https://raw.githubusercontent.com/mattdellavolpe/US-Counties-TopoJSON/master/500k/south_dakota.json";
+	}   
+	else if(state == "West Virginia")
+	{
+		var url = "https://raw.githubusercontent.com/mattdellavolpe/US-Counties-TopoJSON/master/500k/west_virginia.json";
+	}   
+	else
+	{               
+		var url = "https://raw.githubusercontent.com/mattdellavolpe/US-Counties-TopoJSON/master/500k/" + state.toLowerCase()+  ".json"; 
+    }
+    d3.json(url, function(error, us) {
+      if (error) throw error;
+      var curMap = svg.selectAll(".countyPath").data(topojson.feature(us, us.objects.counties).features, function(d){
+        return d.id; 
+      })
+      curMap.exit().remove();
+       var counties = topojson.feature(us, us.objects.counties);
+       console.log(topojson.feature(us, us.objects.counties).features);
+       
+       
+      /*
+        var projection = d3.geoAlbersUsa()
+              .scale(1000)
+              .translate([500 , height/2]);
+                     
+        var path = d3.geoPath()
+                          .projection(projection);
+
+	 //this chunk makes it so the counties show up in the state when clicked.
+	*/
+	 
+	 var width = 1450;
+	 var height = 500;
+	 var path = d3.geoPath()
+	 	.projection(d3.geoMercator()
+       	   .fitExtent([[width/2,0],[width, height/2]], counties));
+      svg.append("g")
+        .attr("class", "states")
+        .selectAll("path")
+        .data(topojson.feature(us, us.objects.counties).features, function(d){ return d.id; })
+        .enter().append("path")
+        .attr("class", "countyPath")
+        .on("click", function(d){ clickState(d); }) //zoom in when clicked
+        .attr("d", path);
+
+      svg.append("path")
+      .attr("class", "county-borders")
+      .attr("d", path(us));
+    });
+  }
+      </script>
+      <script type="text/javascript">
+
+    var statePicker = document.getElementById("statePicker");
+    statePicker.addEventListener("change", function(data){
+      var selectedState = statePicker.options[statePicker.selectedIndex].value;
+      d3.select("#graphsvg").remove();
+      draw(selectedState);
+
+    })
+
+    function draw(state){
+
+    var currentState = state;
+
+    var stateDataMap = new Map();
+    var yearIndexMap = new Map();
+    var reverseYearIndexMap = new Map();
+    yearIndexMap.set(2017, 0).set(2016, 1).set(2015, 2).set(2014, 3).set(2013, 4);
+    reverseYearIndexMap.set(2013, 0).set(2014, 1).set(2015, 2).set(2016, 3).set(2017, 4);
+    var parseTime = d3.timeParse("%Y");
+    var years = [2013,2014,2015,2016,2017];
+    d3.csv("data/12-17salarydata.csv", function(input){
+      input.forEach(function(d) {
+        var salMap = new Map();
+        salMap.set(parseTime(2017), +d['2017']);
+        salMap.set(parseTime(2016), +d['2016']);
+        salMap.set(parseTime(2015), +d['2015']);
+        salMap.set(parseTime(2014), +d['2014']);
+        salMap.set(parseTime(2013), +d['2013']);
+        stateDataMap.set(d['State'], salMap);
+
+      });
+
+
+    var cpiData = [];
+
+    d3.csv("data/cpibyyear.csv", function(input){
+      input.forEach(function(d) {
+        cpiData.push({
+          year: parseTime(+d['Year']),
+          index: +d['Jan']
+        });
+
+
+      });
+
+      console.log(cpiData);
+
+      var margin = {
+        top: 75,
+        right: 75,
+        bottom: 75,
+        left: 75
+      };
+
+      var chartWidth = 580;
+      var chartHeight = 380;
+      var svg1 = d3.select("#graph").append("svg")
+                    .attr("width", chartWidth)
+                    .attr("height", chartHeight)
+                    .attr("id", "graphsvg");
+
+      var width = parseInt(svg1.attr("width")) - (2*margin.left);
+      var height = parseInt(svg1.attr("height")) - (2*margin.top);
+
+      var g = svg1.append("g").attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+      var xVals = d3.scaleTime()
+              .rangeRound([0, width])
+              .domain(d3.extent(Array.from(stateDataMap.get(currentState).keys())));
+
+      var yVals = d3.scaleLinear()
+              .rangeRound([height, 0])
+              .domain(d3.extent(Array.from(stateDataMap.get(currentState).values())));
+
+
+      var leftYVals = d3.scaleLinear()
+                .rangeRound([height, 0])
+                .domain(d3.extent(cpiData, function(d) {return d.index;}));
+
+      g.append("g")
+       .attr("transform", "translate(0," + height + ")")
+       .call(d3.axisBottom(xVals));
+
+      g.append("g")
+       .call(d3.axisLeft(yVals));
+
+      g.append("g")
+        .attr("transform", "translate( " + width + ", 0 )")
+        .call(d3.axisRight(leftYVals));
+
+      var line = d3.line()
+             .x(function(d) {return xVals(parseTime(d));})
+             .y(function(d) {return yVals(Array.from(stateDataMap.get(currentState).values())[yearIndexMap.get(d)]);})
+
+      var cpiLine = d3.line()
+              .x(function(d) {return xVals(parseTime(d));})
+              .y(function(d) {return leftYVals(cpiData[reverseYearIndexMap.get(d)].index);})
+
+      g.append("path")
+        .datum(years)
+        .attr("class", "line")
+        .attr("d", line)
+        .attr("fill", "none")
+        .attr("stroke", "red");
+
+      g.append("path")
+        .datum(years)
+        .attr("class", "cpline")
+        .attr("d", cpiLine)
+        .attr("fill", "none")
+        .attr("stroke", "blue");
+
+       var sampleMap = stateDataMap.get(currentState);
+       console.log(sampleMap);
+       console.log(yearIndexMap);
+       console.log(Array.from(sampleMap.values())[yearIndexMap.get(2017)]);
+
+       var arr = Array.from(stateDataMap.get(currentState).keys());
+       console.log(arr);
+       var target = parseTime(2017);
+       console.log(target);
+       console.log(stateDataMap.get(currentState).get(target));
+       g.selectAll(".point")
+         .data(years)
+         .enter()
+         .append("circle")
+         .attr("class", "dot")
+         .attr("cx", function(d) {return xVals(parseTime(d));})
+         .attr("cy", function(d) {
+                return yVals(Array.from(stateDataMap.get(currentState).values())[yearIndexMap.get(d)])
+
+         })
+         .attr("r", 8);
+
+       g.selectAll(".point")
+        .data(years)
+        .enter()
+        .append("circle")
+        .attr("class", "dot")
+        .attr("cx", function(d) {return xVals(parseTime(d));})
+        .attr("cy", function(d){
+          return leftYVals(cpiData[reverseYearIndexMap.get(d)].index);})
+        .attr("r", 8);
+    });
+
+    });
+
+}
+  </script>
+    </body>
+</html>
