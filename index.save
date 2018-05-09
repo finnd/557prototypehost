@@ -2,18 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Teacher Salaries</title> 
+    <title>Teacher Salary per County</title> 
 
     <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
     <script src="http://d3js.org/topojson.v1.min.js"></script>
   </head>
   <header>
-      <h3 style="font-family: sans-serif; text-align: left;"><u>Can I afford to teach? Salaries as compared to living wage for U.S. Public School Teachers</u></h3>
+      <h1 style="font-family: sans-serif; text-align: center;">Teacher Salary per County</h1>
   </header>
   <style>
   	#graph{
   		position: fixed;
-  		bottom: -160px;
+  		bottom: -110px;
   		right: -140px;
   	}
       .state-names {
@@ -50,115 +50,17 @@
         stroke: black;
         stroke-width: 2px;
       }
-      .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1; 
-    left: 0;
-    top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgb(0,0,0); 
-    background-color: rgba(0,0,0,0.4); 
-}
-
-  /* Modal Content/Box */
-  .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-  }
-
-/* The Close Button */
-  .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-  }
-
-  .close:hover,
-  .close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  .btn {
-  background: #3498db;
-  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
-  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
-  background-image: -ms-linear-gradient(top, #3498db, #2980b9);
-  background-image: -o-linear-gradient(top, #3498db, #2980b9);
-  background-image: linear-gradient(to bottom, #3498db, #2980b9);
-  -webkit-border-radius: 28;
-  -moz-border-radius: 28;
-  border-radius: 28px;
-  font-family: Arial;
-  color: #ffffff;
-  font-size: 20px;
-  padding: 10px 20px 10px 20px;
-  text-decoration: none;
-}
-
-.btn:hover {
-  background: #3cb0fd;
-  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
-  text-decoration: none;
-}
   </style>
   <body>
 
-    <div>
-      <input type="button" id="configure" value="Configure Maps" class="btn"></input>
-    </div>
-
-    <div id="myModal" class="modal">
-
-      <div class="modal-content">
-          <span class="close">&times;</span>
-          <h3 id="countymodalheader"></h3>
-          <p style="color:grey"><u><b>Salary Information</b></u></p>
-          <p id="salary"></p>
-          <p style="color:grey"><u><b>Living Wage Information</b></u></p>
-          <p id="singleadult"></p>
-          <p id="onechildfamily"></p>
-          <p id="twochildfamily"></p>
-    </div>
-
-    </div>
-      <div>
-        <div id="myModal1" class="modal">
-          <div class="modal-content">
-            <span class="close">&times;</span>
-        <p><b><u> Select data to color country map by: </u></b></p>
+      <div id="map" style = "float:center; display: inline"></div>
+       <div>
         <form id = "filter">
           <input  type='radio' id="Salary" name = "mode" value = "Salary" checked>Salary</input>
           <input type='radio' id="CPI" name="mode" value = "Wage">Living Wage</input>
           <input type='radio' id="Difference" name="mode" value = "Difference">Difference in Salary and Living Wage</input>
         </form>
-        <p><b><u>County maps show the difference between salary and living wage. Select your family type below for accurate information: </u></b> <br> (<em style="color:red">red</em> counties are affordable to live in, <em style="color:blue">blue</em> counties are not)</p>
-        <form id ="familytype">
-          <input type="radio" id="SINGLE" name="ftype" value ="SINGLE" checked>Single</input>
-          <input type="radio" id="ONECHILD" name="ftype" value="ONECHILD">One Child Family</input>
-          <input type="radio" id="TWOCHILD" name="ftype" value="TWOCHILD">Two Child Family</input>
-        </form>
       </div>
-    </div>
-
-      <br>
-      <br>
-
-      <div id="map" style = "float:center; display: inline"></div>
-       
-       
 
       <div id="graph" style="height: 500px; width: 750px; float:center; display: inline">
         <select id="statePicker" style="display: none">
@@ -217,28 +119,7 @@
       <script>
         var width = 2500;
         var height = 550;
-        var modal = document.getElementById('myModal');
-        var span = document.getElementsByClassName("close")[0];
-        var modal1 = document.getElementById('myModal1');
-        var span1 = document.getElementsByClassName("close")[1];
-        document.getElementById("configure").addEventListener("click", function(){
-          modal1.style.display = "block";
-        });
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
 
-        span1.onclick = function(){
-          modal1.style.display = "none";
-        }
-
-        window.onclick = function(event) {
-
-          if (event.target == modal || event.target == modal1) {
-               modal.style.display = "none";
-               modal1.style.display = "none";
-          }
-        } 
           // Referenced Mike Bostock's exanple on bl.ocks
           var projection = d3.geoAlbersUsa()
               .scale(1000)
@@ -266,16 +147,16 @@
                   });
           }); 
           d3.csv("data/salarystatedata.csv", function(salaryData) {
-              
                   salaryData.forEach(function(d, i) {
                     for (var j = 0; j < stateInfo.length; j++) {
-                      if (salaryData[i].STATE == stateInfo[j].code) {
+                      if (salaryData[i].STATE == stateInfo[j].name) {
                         stateInfo[j].State = salaryData[i].STATE;
                         stateInfo[j].Year_2017 = salaryData[i].FY2017;
                         stateInfo[j].Year_2016 = salaryData[i].FY2016;
                         stateInfo[j].Year_2015 = salaryData[i].FY2015;
                         stateInfo[j].Year_2014 = salaryData[i].FY2014;
                         stateInfo[j].Year_2013 = salaryData[i].FY2013;
+
                       }
                     }
                   });
@@ -293,7 +174,7 @@
 
       var filter = d3.select("#filter"); 
       filter.on("change", function(){
-         //console.log(stateInfo); 
+         console.log(stateInfo); 
         var value = d3.select('input[name="mode"]:checked').node().value;
         var startScale; 
         var increment; 
@@ -358,7 +239,7 @@
                 fill = colors[i]; 
               }
             } 
-            if (fill == undefined){ /*console.log(selectedState); //console.log(salary)*/ }
+            if (fill == undefined){ console.log(selectedState); console.log(salary); }
             return fill; 
         }); 
       });
@@ -407,7 +288,7 @@
                       var salary;
 
                       for (var i = 0; i < stateInfo.length; i++) {
-                        // //console.log(stateInfo[i].id == data.id);
+                        // console.log(stateInfo[i].id == data.id);
                         if (stateInfo[i].id == data.id) {
                           salary = stateInfo[i].Year_2017;
                           if ((salary > 40000) && (salary < 45000)) {
@@ -453,7 +334,7 @@
                         if (stateInfo[i].id == d.id) {
                           var clickedState = stateInfo[i].State;
                           showCountyMap(stateInfo[i].name); 
-                          //console.log(clickedState);
+                          console.log(clickedState);
                           var picker = document.getElementById("statePicker");
                           var opts = picker.options;
                           for (var opt, j = 0; opt = opts[j]; j++) {
@@ -494,93 +375,31 @@
   
   
   function showCountyMap(state){
-    var curstate = state;
-    var stateObject;
-    for (var i = 0; i < stateInfo.length; i++) {
-          if (stateInfo[i].name == curstate) {
-            stateObject = stateInfo[i];
-          }
-        }
     var countydata = new Map();
-    var flatwages = new Map().set("SINGLE", new Array()).set("ONECHILD", new Array()).set("TWOCHILD", new Array());
-    var flatdeltas = new Map().set("SINGLE", new Array()).set("ONECHILD", new Array()).set("TWOCHILD", new Array());
-
-    var src = "data/livingwage/" + state.toLowerCase() + "livingwage.csv";
-    console.log(state);
-
-    var q = d3.queue();
-
-    q.defer(function(callback, err){
-      d3.csv(src, function(input){
-        input.forEach(function(data){
-          var lwdata = new Map();
+    var flatsalaries = new Map().set("FY17", new Array());
+    if (state == "Virginia"){
+      var src = "data/" + state.toLowerCase() + ".csv"
+      var q = d3.queue();
+      q.defer(function(callback, error) {
+        d3.csv(src, function(input){
+          input.forEach(function(data){
+          var sals = new Map();
           var county = data['COUNTY'];
-          lwdata.set("SINGLE", +data['SINGLE']);
-          lwdata.set("ONECHILD", +data['ONECHILD']);
-          lwdata.set("TWOCHILD", +data['TWOCHILD']);
-          flatwages.get("SINGLE").push(+data['SINGLE']);
-          flatwages.get("ONECHILD").push(+data['ONECHILD']);
-          flatwages.get("TWOCHILD").push(+data['TWOCHILD']);
-          flatdeltas.get("SINGLE").push(stateObject.Year_2017 - +data['SINGLE']);
-          flatdeltas.get("ONECHILD").push(stateObject.Year_2017 - +data['ONECHILD']);
-          flatdeltas.get("TWOCHILD").push(stateObject.Year_2017 - +data['TWOCHILD']);
-
-          countydata.set(county, lwdata)
+          sals.set("FY17", +data['FY17']);
+          sals.set("FY16", +data['FY16']);
+          sals.set("FY15", +data['FY15']);
+          flatsalaries.get("FY17").push(+data['FY17']);
+          countydata.set(county, sals);
         });
-
-        callback(null);
+          callback(null);
       });
-
+       
     });
 
     q.await(function(error){
-    
-    
-
-    console.log(flatdeltas);
-
-    var familytypepicker = d3.select("#familytype");
-    var ftype = d3.select('input[name="ftype"]:checked').node().value;
-    console.log(ftype);
-    var colorScale = d3.scaleLinear()
-                     .domain([d3.min(flatwages.get(ftype), function(d){return d;}),  
-                      d3.mean(flatwages.get(ftype), function(d){return d;}),
-                      d3.mean(flatwages.get(ftype), function(d){return d;}), 
-                      d3.max(flatwages.get(ftype), function(d){return d;})])
-                     .range(["#e0f2f9", "#9CDFF9", "#025d7f", "#023448"]);
-
-
-    familytypepicker.on("change", function(){
-      var value = d3.select('input[name="ftype"]:checked').node().value;
-      showCountyMap(curstate)
-      return;
+      // pass
     });
-
-
-
-    // if (state == "Virginia"){
-    //   var src = "data/" + state.toLowerCase() + ".csv"
-    //   var q = d3.queue();
-    //   q.defer(function(callback, error) {
-    //     d3.csv(src, function(input){
-    //       input.forEach(function(data){
-    //       var sals = new Map();
-    //       var county = data['COUNTY'];
-    //       sals.set("FY17", +data['FY17']);
-    //       sals.set("FY16", +data['FY16']);
-    //       sals.set("FY15", +data['FY15']);
-    //       flatsalaries.get("FY17").push(+data['FY17']);
-    //       countydata.set(county, sals);
-    //     });
-    //       callback(null);
-    //   });
-       
-    // });
-
-    // q.await(function(error){
-    //   // pass
-    // });
-  
+  }
 	
 	if(state == "New York")
 	{
@@ -633,7 +452,7 @@
       })
       curMap.exit().remove();
        var counties = topojson.feature(us, us.objects.counties);
-       //console.log(topojson.feature(us, us.objects.counties).features);
+       console.log(topojson.feature(us, us.objects.counties).features);
        
        
       /*
@@ -655,12 +474,12 @@
 		width = 1500;
 	  height = 400;
 	 }
- // var colorScale = d3.scaleLinear()
- //                    .domain([d3.min(flatsalaries.get("FY17"), function(d){return d;}),  
- //                     d3.mean(flatsalaries.get("FY17"), function(d){return d;}),
- //                     d3.mean(flatsalaries.get("FY17"), function(d){return d;}), 
- //                     d3.max(flatsalaries.get("FY17"), function(d){return d;})])
- //                    .range(["#e0f2f9", "#9CDFF9", "#025d7f", "#023448"]);
+ var colorScale = d3.scaleLinear()
+                    .domain([d3.min(flatsalaries.get("FY17"), function(d){return d;}),  
+                     d3.mean(flatsalaries.get("FY17"), function(d){return d;}),
+                     d3.mean(flatsalaries.get("FY17"), function(d){return d;}), 
+                     d3.max(flatsalaries.get("FY17"), function(d){return d;})])
+                    .range(["#e0f2f9", "#9CDFF9", "#025d7f", "#023448"]);
 
 
 
@@ -676,129 +495,13 @@
         .enter().append("path")
         .attr("class", "countyPath")
         .on("click", function(d){ 
-            console.log(countydata);
-            var name = d.properties.name;
-            console.log(name);
-            var countyliving = countydata.get(name);
-            var salary = String(stateObject.Year_2017).slice(0,2) + "," + String(stateObject.Year_2017).slice(2);
-            var singlesalary = String(countyliving.get("SINGLE")).slice(0,2) + "," + String(countyliving.get("SINGLE")).slice(2);
-            var onechildsalary = String(countyliving.get("ONECHILD")).slice(0,2) + "," + String(countyliving.get("ONECHILD")).slice(2);
-            var twochildsalary = String(countyliving.get("TWOCHILD")).slice(0,2) + "," + String(countyliving.get("TWOCHILD")).slice(2);
-
-            var singleDelta = parseInt(stateObject.Year_2017) - parseInt(countyliving.get("SINGLE"));
-            var oneDelta = parseInt(stateObject.Year_2017) - parseInt(countyliving.get("ONECHILD"));
-            var twoDelta = parseInt(stateObject.Year_2017) - parseInt(countyliving.get("TWOCHILD"));
-
-            var scolor = singleDelta > 0 ? "red" : "blue";
-            var ocolor = oneDelta > 0 ? "red" : "blue";
-            var tcolor = twoDelta > 0 ? "red" : "blue";
-
-            var stoken = singleDelta > 0 ? "+" : "-";
-            var otoken = oneDelta > 0 ? "+" : "-";
-            var ttoken = twoDelta > 0 ? "+" : "-";
-
-
-            document.getElementById("countymodalheader").innerHTML = "<u><b>Information for:</b></u> " + name + ", " + state;
-            document.getElementById("singleadult").innerHTML = "<b>Single Adult:</b> $" + singlesalary + "\t\t" + "<em style='color:" + scolor + "'>(" + stoken + " $" + Math.abs(singleDelta) + ")</em>";
-            document.getElementById("onechildfamily").innerHTML = "<b>One Child Family:</b> $" + onechildsalary + "\t\t" + "<em style='color:" + ocolor + "'>(" + otoken + " $" +  Math.abs(oneDelta) + ")</em>";
-            document.getElementById("twochildfamily").innerHTML = "<b>Two Child Family:</b> $" + twochildsalary + "\t\t" + "<em style='color:" + tcolor + "'>(" + ttoken + " $" +  Math.abs(twoDelta) + ")</em>";
-            document.getElementById("salary").innerHTML = "<b> Average Teacher Salary:</b> $" + salary;
-
-            modal.style.display = "block";
+               console.log(d.properties.name);
+               console.log(state)
              })
         .attr("d", path)
         .attr("fill", function(d){
           var name = d.properties.name;
-          try{
-            if (typeof name != 'undefined'){
-            
-            var countyLivingWage = countydata.get(name).get(ftype);
-            var countySalary = stateObject.Year_2017;
-            var delta = countySalary - countyLivingWage;
-            if(delta < 0){
-              if (delta >= -1000){
-                return "#ccd2ff";
-              }
-              if (delta >= -3000){
-                return "#99a5ff";
-              }
-
-              if (delta >= -5000){
-                return "#6678ff";
-              }
-
-              if (delta >= -7000){
-                return "#334bff";
-              }
-
-              if (delta >= -9000){
-                return "#001eff";
-              }
-
-              if (delta >= -11000){
-                return "#0018cc";
-              }
-
-              if (delta >= -12000){
-                return "#001299";
-              }
-
-              if (delta >= -16000){
-                return "#000c66";
-              } else {
-                return "#000633"
-              }
-            }
-            else {
-              if (delta <= 1000){
-                return "#ffe6e6";
-              }if (delta <= 2000){
-                return "#ffcccc";
-              }if (delta <= 3000){
-                return "#ffb3b3";
-              }if (delta <= 4000){
-                return "#ff9999";
-              }if (delta <= 5000){
-                return "#ff8080";
-              }if (delta <= 6000){
-                return "#ff6666";
-              }if (delta <= 7000){
-                return "#ff4d4d";
-              }if (delta <= 8000){
-                return "#ff3333";
-              }if (delta <= 9000){
-                return "#ff1919";
-              }if (delta <= 10000){
-                return "#ff0000";
-              }if (delta <= 11000){
-                return "#e60000";
-              }if (delta <= 12000){
-                return "#cc0000";
-              }if (delta <= 13000){
-                return "#b30000";
-              }if (delta <= 14000){
-                return "#990000";
-              }if (delta <= 15000){
-                return "#800000";
-              }if (delta <= 16000){
-                return "#660000";
-              }if (delta <= 17000){
-                return "#99001a";
-              }if (delta <= 18000){
-                return "#800015"
-              }if (delta <= 19000){
-                return "#660011";
-              }if (delta > 19000){
-                return "#800400";
-              }
-            }
-            // return colorScale(countydata.get(name).get(ftype)); 
-            
-        }
-      } catch(err){
-        //pass
-      }
-  
+         
         });
       
 
@@ -807,8 +510,6 @@
       .attr("d", path(us));
 
     });
-
-  });
   }
       </script>
       <script type="text/javascript">
@@ -816,13 +517,12 @@
     var statePicker = document.getElementById("statePicker");
     statePicker.addEventListener("change", function(data){
       var selectedState = statePicker.options[statePicker.selectedIndex].value;
-      var state_name =  statePicker.options[statePicker.selectedIndex].text;
       d3.select("#graphsvg").remove();
-      draw(selectedState, state_name);
+      draw(selectedState);
 
     })
 
-    function draw(state, state_name){
+    function draw(state){
 
     var currentState = state;
 
@@ -833,15 +533,15 @@
     reverseYearIndexMap.set(2013, 0).set(2014, 1).set(2015, 2).set(2016, 3).set(2017, 4);
     var parseTime = d3.timeParse("%Y");
     var years = [2013,2014,2015,2016,2017];
-    d3.csv("data/salarystatedata.csv", function(input){
+    d3.csv("data/12-17salarydata.csv", function(input){
       input.forEach(function(d) {
         var salMap = new Map();
-        salMap.set(parseTime(2017), +d['FY2017']);
-        salMap.set(parseTime(2016), +d['FY2016']);
-        salMap.set(parseTime(2015), +d['FY2015']);
-        salMap.set(parseTime(2014), +d['FY2014']);
-        salMap.set(parseTime(2013), +d['FY2013']);
-        stateDataMap.set(d['STATE'], salMap);
+        salMap.set(parseTime(2017), +d['2017']);
+        salMap.set(parseTime(2016), +d['2016']);
+        salMap.set(parseTime(2015), +d['2015']);
+        salMap.set(parseTime(2014), +d['2014']);
+        salMap.set(parseTime(2013), +d['2013']);
+        stateDataMap.set(d['State'], salMap);
 
       });
 
@@ -858,7 +558,7 @@
 
       });
 
-      //console.log(cpiData);
+      console.log(cpiData);
 
       var margin = {
         top: 75,
@@ -877,24 +577,7 @@
       var width = parseInt(svg1.attr("width")) - (2*margin.left);
       var height = parseInt(svg1.attr("height")) - (2*margin.top);
 
-
       var g = svg1.append("g").attr("transform","translate(" + margin.left + "," + margin.top + ")");
-
-      g.append("text")
-               .attr("x", chartWidth - 180)
-               .attr("y", 0-10)
-               .attr("stroke", "blue")
-               .text("CPI");
-              g.append("text")
-                .attr("x", 0 - .50*margin.left)
-                .attr("y", 0 - 10)
-                .attr("stroke", "red")
-                .text("Salary");
-
-              g.append("text")
-                .attr("x", 0 + chartWidth / 9.0)
-                .attr("y", 0-10)
-                .text("Average Salary v.s. CPI for " + state_name + " (2013-2017)");
 
       var xVals = d3.scaleTime()
               .rangeRound([0, width])
@@ -911,15 +594,13 @@
 
       g.append("g")
        .attr("transform", "translate(0," + height + ")")
-       .call(d3.axisBottom(xVals).tickFormat(d3.timeFormat("%Y")).ticks(5));
+       .call(d3.axisBottom(xVals));
 
       g.append("g")
-       .attr("stroke", "red")
        .call(d3.axisLeft(yVals));
 
       g.append("g")
         .attr("transform", "translate( " + width + ", 0 )")
-        .attr("stroke", "blue")
         .call(d3.axisRight(leftYVals));
 
       var line = d3.line()
@@ -945,15 +626,15 @@
         .attr("stroke", "blue");
 
        var sampleMap = stateDataMap.get(currentState);
-       //console.log(sampleMap);
-       //console.log(yearIndexMap);
-       //console.log(Array.from(sampleMap.values())[yearIndexMap.get(2017)]);
+       console.log(sampleMap);
+       console.log(yearIndexMap);
+       console.log(Array.from(sampleMap.values())[yearIndexMap.get(2017)]);
 
        var arr = Array.from(stateDataMap.get(currentState).keys());
-       //console.log(arr);
+       console.log(arr);
        var target = parseTime(2017);
-       //console.log(target);
-       //console.log(stateDataMap.get(currentState).get(target));
+       console.log(target);
+       console.log(stateDataMap.get(currentState).get(target));
        g.selectAll(".point")
          .data(years)
          .enter()
@@ -981,6 +662,5 @@
 
 }
   </script>
-
     </body>
 </html>

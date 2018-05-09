@@ -9,29 +9,26 @@
   </head>
   <header>
       <h3 style="font-family: sans-serif; text-align: left;"><u>Can I afford to teach? Salaries as compared to living wage for U.S. Public School Teachers</u></h3>
+      <br>
+      <br>
   </header>
   <style>
   	#graph{
   		position: fixed;
-  		bottom: -160px;
+  		bottom: -110px;
   		right: -140px;
   	}
-      .state-names {
-          font-family: sans-serif;
-          text-align: middle;
-          fill: black;
-          pointer-events: all;
-      }
-      .states {
-        stroke: black;
+    .states{
+    	stroke: white;
         stroke-width: 2px;
-        fill: none;
         pointer-events: all
-      }
-      .states :hover{
-        fill: black;
-        
-      }
+    }
+    .hover {
+    	fill: black;
+	}
+    .selected{
+    	fill: black;
+	}     
       /*From studio 5*/
       div.tooltip {
         position: absolute;
@@ -50,17 +47,18 @@
         stroke: black;
         stroke-width: 2px;
       }
+
       .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1; 
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
     left: 0;
     top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgb(0,0,0); 
-    background-color: rgba(0,0,0,0.4); 
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
   /* Modal Content/Box */
@@ -86,40 +84,8 @@
     text-decoration: none;
     cursor: pointer;
   }
-
-  .btn {
-  background: #3498db;
-  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
-  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
-  background-image: -ms-linear-gradient(top, #3498db, #2980b9);
-  background-image: -o-linear-gradient(top, #3498db, #2980b9);
-  background-image: linear-gradient(to bottom, #3498db, #2980b9);
-  -webkit-border-radius: 28;
-  -moz-border-radius: 28;
-  border-radius: 28px;
-  font-family: Arial;
-  color: #ffffff;
-  font-size: 20px;
-  padding: 10px 20px 10px 20px;
-  text-decoration: none;
-}
-
-.btn:hover {
-  background: #3cb0fd;
-  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
-  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
-  text-decoration: none;
-}
   </style>
   <body>
-
-    <div>
-      <input type="button" id="configure" value="Configure Maps" class="btn"></input>
-    </div>
-
     <div id="myModal" class="modal">
 
       <div class="modal-content">
@@ -134,31 +100,26 @@
     </div>
 
     </div>
-      <div>
-        <div id="myModal1" class="modal">
-          <div class="modal-content">
-            <span class="close">&times;</span>
+
+
+      <div id="map" style = "float:center; display: inline"></div>
+       <div>
         <p><b><u> Select data to color country map by: </u></b></p>
         <form id = "filter">
           <input  type='radio' id="Salary" name = "mode" value = "Salary" checked>Salary</input>
           <input type='radio' id="CPI" name="mode" value = "Wage">Living Wage</input>
           <input type='radio' id="Difference" name="mode" value = "Difference">Difference in Salary and Living Wage</input>
         </form>
-        <p><b><u>County maps show the difference between salary and living wage. Select your family type below for accurate information: </u></b> <br> (<em style="color:red">red</em> counties are affordable to live in, <em style="color:blue">blue</em> counties are not)</p>
+      </div>
+
+      <div>
+        <p><b><u> Select your family type for county map coloring </u></b></p>
         <form id ="familytype">
           <input type="radio" id="SINGLE" name="ftype" value ="SINGLE" checked>Single</input>
           <input type="radio" id="ONECHILD" name="ftype" value="ONECHILD">One Child Family</input>
           <input type="radio" id="TWOCHILD" name="ftype" value="TWOCHILD">Two Child Family</input>
         </form>
-      </div>
-    </div>
-
-      <br>
-      <br>
-
-      <div id="map" style = "float:center; display: inline"></div>
-       
-       
+        </div>
 
       <div id="graph" style="height: 500px; width: 750px; float:center; display: inline">
         <select id="statePicker" style="display: none">
@@ -219,24 +180,13 @@
         var height = 550;
         var modal = document.getElementById('myModal');
         var span = document.getElementsByClassName("close")[0];
-        var modal1 = document.getElementById('myModal1');
-        var span1 = document.getElementsByClassName("close")[1];
-        document.getElementById("configure").addEventListener("click", function(){
-          modal1.style.display = "block";
-        });
         span.onclick = function() {
             modal.style.display = "none";
         }
 
-        span1.onclick = function(){
-          modal1.style.display = "none";
-        }
-
         window.onclick = function(event) {
-
-          if (event.target == modal || event.target == modal1) {
+          if (event.target == modal) {
                modal.style.display = "none";
-               modal1.style.display = "none";
           }
         } 
           // Referenced Mike Bostock's exanple on bl.ocks
@@ -402,6 +352,7 @@
                     .enter()
                     .append("path")
                     .attr("d", path)
+                    
 
                     .attr("fill", function(data) {
                       var salary;
@@ -430,7 +381,15 @@
                         }
                       }
                     })
-                
+                    
+                    /*let hoverEnabled = false;
+  					svg.on('click', x => hoverEnabled = true)
+    					.on('mouseup', x => hoverEnabled = false)
+  					svg.selectAll('.states path').on('click', function() {
+    					if (hoverEnabled) {
+      						this.classList.add('hovered');
+   						 }
+  					})*/
                     // Tooltip reference from Piazza
                     .on("mousemove", function(data) {
                       var tooltipState;
@@ -448,11 +407,25 @@
                             .style("top", (d3.event.pageY ) + "px")
                             .style("opacity", .9); 
                     })
-                    .on("click", function(d){
+                    /*following code adapted from https://bl.ocks.org/andrew-reid/f5b4227c93d197d69cf73e62c73afef3*/
+                    .on("click", function (d) {
+					 svg.selectAll('path').attr('class','states'); 
+					  d3.selectAll('path').on("mouseover", function (d) 
+					  { 
+					  	d3.select(this).attr("class", "states hover"); 
+					  	d3.select(this).on("mouseout", function(d) 
+					  	{
+					  		d3.select(this).attr("class", "states");
+					  	})
+					})
+					d3.select(this).on("mouseout", null); // cancel mouseover events for clicked features
+					d3.select(this).on('mouseover',null);
+					d3.select(this).attr('class','selected');
                       for (var i = 0; i < stateInfo.length; i++) {
                         if (stateInfo[i].id == d.id) {
                           var clickedState = stateInfo[i].State;
                           showCountyMap(stateInfo[i].name); 
+                          
                           //console.log(clickedState);
                           var picker = document.getElementById("statePicker");
                           var opts = picker.options;
@@ -506,7 +479,6 @@
     var flatdeltas = new Map().set("SINGLE", new Array()).set("ONECHILD", new Array()).set("TWOCHILD", new Array());
 
     var src = "data/livingwage/" + state.toLowerCase() + "livingwage.csv";
-    console.log(state);
 
     var q = d3.queue();
 
@@ -676,7 +648,7 @@
         .enter().append("path")
         .attr("class", "countyPath")
         .on("click", function(d){ 
-            console.log(countydata);
+            
             var name = d.properties.name;
             console.log(name);
             var countyliving = countydata.get(name);
@@ -816,13 +788,12 @@
     var statePicker = document.getElementById("statePicker");
     statePicker.addEventListener("change", function(data){
       var selectedState = statePicker.options[statePicker.selectedIndex].value;
-      var state_name =  statePicker.options[statePicker.selectedIndex].text;
       d3.select("#graphsvg").remove();
-      draw(selectedState, state_name);
+      draw(selectedState);
 
     })
 
-    function draw(state, state_name){
+    function draw(state){
 
     var currentState = state;
 
@@ -877,24 +848,7 @@
       var width = parseInt(svg1.attr("width")) - (2*margin.left);
       var height = parseInt(svg1.attr("height")) - (2*margin.top);
 
-
       var g = svg1.append("g").attr("transform","translate(" + margin.left + "," + margin.top + ")");
-
-      g.append("text")
-               .attr("x", chartWidth - 180)
-               .attr("y", 0-10)
-               .attr("stroke", "blue")
-               .text("CPI");
-              g.append("text")
-                .attr("x", 0 - .50*margin.left)
-                .attr("y", 0 - 10)
-                .attr("stroke", "red")
-                .text("Salary");
-
-              g.append("text")
-                .attr("x", 0 + chartWidth / 9.0)
-                .attr("y", 0-10)
-                .text("Average Salary v.s. CPI for " + state_name + " (2013-2017)");
 
       var xVals = d3.scaleTime()
               .rangeRound([0, width])
@@ -914,12 +868,10 @@
        .call(d3.axisBottom(xVals).tickFormat(d3.timeFormat("%Y")).ticks(5));
 
       g.append("g")
-       .attr("stroke", "red")
        .call(d3.axisLeft(yVals));
 
       g.append("g")
         .attr("transform", "translate( " + width + ", 0 )")
-        .attr("stroke", "blue")
         .call(d3.axisRight(leftYVals));
 
       var line = d3.line()
