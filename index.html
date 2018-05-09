@@ -56,13 +56,13 @@ for standard goods, while a decrease in CPI means a consumer is paying less. Mor
           pointer-events: all;
       }
       .states {
-        stroke: black;
+        stroke: white;
         stroke-width: 2px;
         fill: none;
         pointer-events: all
       }
       .states :hover{
-        fill: black;
+        fill-opacity: .5;
         
       }
       /*From studio 5*/
@@ -95,7 +95,6 @@ for standard goods, while a decrease in CPI means a consumer is paying less. Mor
     background-color: rgb(0,0,0); 
     background-color: rgba(0,0,0,0.4); 
 }
-
   /* Modal Content/Box */
   .modal-content {
     background-color: #fefefe;
@@ -104,7 +103,6 @@ for standard goods, while a decrease in CPI means a consumer is paying less. Mor
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
   }
-
 /* The Close Button */
   .close {
     color: #aaa;
@@ -112,14 +110,12 @@ for standard goods, while a decrease in CPI means a consumer is paying less. Mor
     font-size: 28px;
     font-weight: bold;
   }
-
   .close:hover,
   .close:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
   }
-
   .btn {
   background: #3498db;
   background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
@@ -136,7 +132,6 @@ for standard goods, while a decrease in CPI means a consumer is paying less. Mor
   padding: 10px 20px 10px 20px;
   text-decoration: none;
 }
-
 .btn:hover {
   background: #3cb0fd;
   background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
@@ -146,17 +141,13 @@ for standard goods, while a decrease in CPI means a consumer is paying less. Mor
   background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
   text-decoration: none;
 }
-
 i
   </style>
   <body>
-
     <div>
       <input type="button" id="configure" value="Configure Maps" class="btn"></input>
     </div>
-
     <div id="myModal" class="modal">
-
       <div class="modal-content">
           <span class="close">&times;</span>
           <h3 id="countymodalheader"></h3>
@@ -167,7 +158,6 @@ i
           <p id="onechildfamily"></p>
           <p id="twochildfamily"></p>
     </div>
-
     </div>
       <div>
         <div id="myModal1" class="modal">
@@ -186,20 +176,16 @@ i
           <input type="radio" id="ONECHILD" name="ftype" value="ONECHILD">One Child Family</input>
           <input type="radio" id="TWOCHILD" name="ftype" value="TWOCHILD">Two Child Family</input>
         </form>
-
-        <p><b><u>You can also enter a custom salary filter. Any states below this salary will appear grey</u></b></p>
+        <p><b><u>You can also enter a custom salary filter. Any states below this salary will appear white</u></b></p>
         <input type="checkbox" id="customlimit" value="Custom Salary Minimum">Use Custom Minimum Salary</input>
         <input type="text" id="numlimit" placeholder="50000" class="w3-input"></input>
       </div>
     </div>
-
       <br>
       <br>
-
       <div id="map" style = "float:center; display: inline"></div>
        
        
-
       <div id="graph" style="height: 500px; width: 750px; float:center; display: inline">
         <select id="statePicker" style="display: none">
   			<option value="AL">Alabama</option>
@@ -269,19 +255,15 @@ i
         span.onclick = function() {
             modal.style.display = "none";
         }
-
         span1.onclick = function(){
           modal1.style.display = "none";
         }
-
         window.onclick = function(event) {
-
           if (event.target == modal || event.target == modal1) {
                modal.style.display = "none";
                modal1.style.display = "none";
           }
         } 
-
         document.getElementById("numlimit").onkeyup = function(){
           if (document.getElementById("customlimit").checked){
             useCustomSalaryLimit = true;
@@ -290,9 +272,7 @@ i
             var event = new Event("change");
             f1.dispatchEvent(event);
           }
-
         }
-
         document.getElementById("customlimit").addEventListener("change", function(){
           if (document.getElementById("customlimit").checked){
             // do nothing
@@ -302,16 +282,13 @@ i
             var event = new Event("change");
             f1.dispatchEvent(event);
           }
-
         });
           // Referenced Mike Bostock's exanple on bl.ocks
           var projection = d3.geoAlbersUsa()
               .scale(1000)
               .translate([500 , height / 2]);
-
           var path = d3.geoPath()
                           .projection(projection);
-
           var svg = d3.select("#map")
                       .append("svg")
                       .attr("width", width)
@@ -354,8 +331,6 @@ i
             } 
         }); 
       });
-
-
       var filter = d3.select("#filter"); 
       filter.on("change", function(){
          //console.log(stateInfo); 
@@ -394,12 +369,10 @@ i
            tmpScale += increment; 
          }
           legend.selectAll("text").text(function(d, i){ return labelText[d-1]; });
-
         svg.selectAll(".states").selectAll(function(){ return this.childNodes; })
         .attr("fill", function(d){
           var selectedState; 
           var salary; 
-
           for (var i = 0; i < stateInfo.length; i++) {
             if (stateInfo[i].id == d.id) {
               selectedState = stateInfo[i]; 
@@ -424,17 +397,14 @@ i
               }
             } 
             if (fill == undefined){ /*console.log(selectedState); //console.log(salary)*/ }
-
             if (useCustomSalaryLimit){
               console.log("using custom salary limit");
               if (selectedState.Year_2017 < customSalary){
-                return "#3e423f";
+                return "white";
               } else {
                 return fill;
               }
-
             }
-
             return fill; 
         }); 
       });
@@ -442,32 +412,29 @@ i
 		  var legendRange = [1, 2, 3, 4, 5, 6, 7, 8];
           var legendLabels = ["$40-45k", "45-50k", "50-55k", "55-60k", "60-65k", "65-70k", "70-75k", "75-80k"]
           var legendColors = d3.scaleOrdinal()
-              .range(["#e0f2f9", "#9CDFF9", "#70d7ff", "#3bb0dd", "#199fd3", "#0291c9", "#025d7f", "#023448"]);
+              .range(["#e0f2f9", "#9CDFF9", "#70d7ff", "#3bb0dd", "#199fd3", "#0291c9", "#025d7f", "#023448"]);
           
           var legend = svg.selectAll("g.legend")
-              .data(legendRange)
-              .enter().append("g")
-              .attr("class", "legend");
-
-              var rectW = 30, rectH = 30;
-
-              legend.append("rect")
-              .attr("x", 0)
-              .attr("y", function(d, i){
-              return 300 - (i*rectH) - 2*rectH; 
-              })
-              .attr("width", rectW)
-              .attr("height", rectH)
-              .style("fill", legendColors)
-
-              legend.append("text")
-              .attr("x", 44)
-              .attr("y", function(d, i){ 
-              return 300 - (i*rectH) - rectH - 6;
-              })
-              .text(function(d, i){ 
-              return legendLabels[i]; 
-              });                
+              .data(legendRange)
+              .enter().append("g")
+              .attr("class", "legend");
+              var rectW = 30, rectH = 30;
+              legend.append("rect")
+              .attr("x", 0)
+              .attr("y", function(d, i){
+              return 300 - (i*rectH) - 2*rectH; 
+              })
+              .attr("width", rectW)
+              .attr("height", rectH)
+              .style("fill", legendColors)
+              legend.append("text")
+              .attr("x", 44)
+              .attr("y", function(d, i){ 
+              return 300 - (i*rectH) - rectH - 6;
+              })
+              .text(function(d, i){ 
+              return legendLabels[i]; 
+              });                
           
           d3.json("us.json", function(map) {
             var data = topojson.feature(map, map.objects.states).features;
@@ -478,10 +445,8 @@ i
                     .enter()
                     .append("path")
                     .attr("d", path)
-
                     .attr("fill", function(data) {
                       var salary;
-
                       for (var i = 0; i < stateInfo.length; i++) {
                         // //console.log(stateInfo[i].id == data.id);
                         if (stateInfo[i].id == data.id) {
@@ -518,7 +483,6 @@ i
                           tooltip2017 = stateInfo[i].Year_2017;
                         }
                       }
-
                       tooltip.html(tooltipState + "\n" + "average teacher salary in 2017: $" + tooltip2017)
                             .style("left", (d3.event.pageX) + "px")     
                             .style("top", (d3.event.pageY ) + "px")
@@ -537,14 +501,12 @@ i
                                 picker.selectedIndex = j;
                                 var event = new Event('change');
                                 picker.dispatchEvent(event);
-
                                 break;
                           }
                         }
                           
                         }
                       }
-
                     })
                     .on("mouseout", function(d) {           
                         tooltip.style("opacity", 0);    
@@ -556,7 +518,6 @@ i
                     .data(data)
                     .enter()
                     .append("text")
-
                     // centroid from bl.ocks
                     .attr("x", function(d){
                       return path.centroid(d)[0];
@@ -566,7 +527,6 @@ i
                     });
                  
                 });
-
   
   
   function showCountyMap(state){
@@ -580,12 +540,9 @@ i
     var countydata = new Map();
     var flatwages = new Map().set("SINGLE", new Array()).set("ONECHILD", new Array()).set("TWOCHILD", new Array());
     var flatdeltas = new Map().set("SINGLE", new Array()).set("ONECHILD", new Array()).set("TWOCHILD", new Array());
-
     var src = "data/livingwage/" + state.toLowerCase() + "livingwage.csv";
     console.log(state);
-
     var q = d3.queue();
-
     q.defer(function(callback, err){
       d3.csv(src, function(input){
         input.forEach(function(data){
@@ -600,21 +557,15 @@ i
           flatdeltas.get("SINGLE").push(stateObject.Year_2017 - +data['SINGLE']);
           flatdeltas.get("ONECHILD").push(stateObject.Year_2017 - +data['ONECHILD']);
           flatdeltas.get("TWOCHILD").push(stateObject.Year_2017 - +data['TWOCHILD']);
-
           countydata.set(county, lwdata)
         });
-
         callback(null);
       });
-
     });
-
     q.await(function(error){
     
     
-
     console.log(flatdeltas);
-
     var familytypepicker = d3.select("#familytype");
     var ftype = d3.select('input[name="ftype"]:checked').node().value;
     console.log(ftype);
@@ -624,16 +575,11 @@ i
                       d3.mean(flatwages.get(ftype), function(d){return d;}), 
                       d3.max(flatwages.get(ftype), function(d){return d;})])
                      .range(["#e0f2f9", "#9CDFF9", "#025d7f", "#023448"]);
-
-
     familytypepicker.on("change", function(){
       var value = d3.select('input[name="ftype"]:checked').node().value;
       showCountyMap(curstate)
       return;
     });
-
-
-
     // if (state == "Virginia"){
     //   var src = "data/" + state.toLowerCase() + ".csv"
     //   var q = d3.queue();
@@ -652,7 +598,6 @@ i
     //   });
        
     // });
-
     // q.await(function(error){
     //   // pass
     // });
@@ -719,7 +664,6 @@ i
                      
         var path = d3.geoPath()
                           .projection(projection);
-
 	 //this chunk makes it so the counties show up in the state when clicked.
 	*/
 	 
@@ -737,11 +681,7 @@ i
  //                     d3.mean(flatsalaries.get("FY17"), function(d){return d;}), 
  //                     d3.max(flatsalaries.get("FY17"), function(d){return d;})])
  //                    .range(["#e0f2f9", "#9CDFF9", "#025d7f", "#023448"]);
-
-
-
  
-
 	 var path = d3.geoPath()
 	 	.projection(d3.geoMercator()
     .fitExtent([[width/2,0],[width, height/2]], counties));
@@ -760,26 +700,20 @@ i
             var singlesalary = String(countyliving.get("SINGLE")).slice(0,2) + "," + String(countyliving.get("SINGLE")).slice(2);
             var onechildsalary = String(countyliving.get("ONECHILD")).slice(0,2) + "," + String(countyliving.get("ONECHILD")).slice(2);
             var twochildsalary = String(countyliving.get("TWOCHILD")).slice(0,2) + "," + String(countyliving.get("TWOCHILD")).slice(2);
-
             var singleDelta = parseInt(stateObject.Year_2017) - parseInt(countyliving.get("SINGLE"));
             var oneDelta = parseInt(stateObject.Year_2017) - parseInt(countyliving.get("ONECHILD"));
             var twoDelta = parseInt(stateObject.Year_2017) - parseInt(countyliving.get("TWOCHILD"));
-
             var scolor = singleDelta > 0 ? "red" : "blue";
             var ocolor = oneDelta > 0 ? "red" : "blue";
             var tcolor = twoDelta > 0 ? "red" : "blue";
-
             var stoken = singleDelta > 0 ? "+" : "-";
             var otoken = oneDelta > 0 ? "+" : "-";
             var ttoken = twoDelta > 0 ? "+" : "-";
-
-
             document.getElementById("countymodalheader").innerHTML = "<u><b>Information for:</b></u> " + name + ", " + state;
             document.getElementById("singleadult").innerHTML = "<b>Single Adult:</b> $" + singlesalary + "\t\t" + "<em style='color:" + scolor + "'>(" + stoken + " $" + Math.abs(singleDelta) + ")</em>";
             document.getElementById("onechildfamily").innerHTML = "<b>One Child Family:</b> $" + onechildsalary + "\t\t" + "<em style='color:" + ocolor + "'>(" + otoken + " $" +  Math.abs(oneDelta) + ")</em>";
             document.getElementById("twochildfamily").innerHTML = "<b>Two Child Family:</b> $" + twochildsalary + "\t\t" + "<em style='color:" + tcolor + "'>(" + ttoken + " $" +  Math.abs(twoDelta) + ")</em>";
             document.getElementById("salary").innerHTML = "<b> Average Teacher Salary:</b> $" + salary;
-
             modal.style.display = "block";
              })
         .attr("d", path)
@@ -798,27 +732,21 @@ i
               if (delta >= -3000){
                 return "#99a5ff";
               }
-
               if (delta >= -5000){
                 return "#6678ff";
               }
-
               if (delta >= -7000){
                 return "#334bff";
               }
-
               if (delta >= -9000){
                 return "#001eff";
               }
-
               if (delta >= -11000){
                 return "#0018cc";
               }
-
               if (delta >= -12000){
                 return "#001299";
               }
-
               if (delta >= -16000){
                 return "#000c66";
               } else {
@@ -877,31 +805,23 @@ i
   
         });
       
-
       svg.append("path")
       .attr("class", "county-borders")
       .attr("d", path(us));
-
     });
-
   });
   }
       </script>
       <script type="text/javascript">
-
     var statePicker = document.getElementById("statePicker");
     statePicker.addEventListener("change", function(data){
       var selectedState = statePicker.options[statePicker.selectedIndex].value;
       var state_name =  statePicker.options[statePicker.selectedIndex].text;
       d3.select("#graphsvg").remove();
       draw(selectedState, state_name);
-
     })
-
     function draw(state, state_name){
-
     var currentState = state;
-
     var stateDataMap = new Map();
     var yearIndexMap = new Map();
     var reverseYearIndexMap = new Map();
@@ -918,44 +838,31 @@ i
         salMap.set(parseTime(2014), +d['FY2014']);
         salMap.set(parseTime(2013), +d['FY2013']);
         stateDataMap.set(d['STATE'], salMap);
-
       });
-
-
     var cpiData = [];
-
     d3.csv("data/cpibyyear.csv", function(input){
       input.forEach(function(d) {
         cpiData.push({
           year: parseTime(+d['Year']),
           index: +d['Jan']
         });
-
-
       });
-
       //console.log(cpiData);
-
       var margin = {
         top: 75,
         right: 75,
         bottom: 75,
         left: 75
       };
-
       var chartWidth = 580;
       var chartHeight = 380;
       var svg1 = d3.select("#graph").append("svg")
                     .attr("width", chartWidth)
                     .attr("height", chartHeight)
                     .attr("id", "graphsvg");
-
       var width = parseInt(svg1.attr("width")) - (2*margin.left);
       var height = parseInt(svg1.attr("height")) - (2*margin.top);
-
-
       var g = svg1.append("g").attr("transform","translate(" + margin.left + "," + margin.top + ")");
-
       g.append("text")
                .attr("x", chartWidth - 180)
                .attr("y", 0-10)
@@ -966,67 +873,53 @@ i
                 .attr("y", 0 - 10)
                 .attr("stroke", "red")
                 .text("Salary");
-
               g.append("text")
                 .attr("x", 0 + 50)
                 .attr("y", 0-10)
                 .attr("font-size", "12px")
                 .attr("text-decoration", "underline")
                 .text("Average Salary v.s. CPI for " + state_name + " (2013-2017)");
-
       var xVals = d3.scaleTime()
               .rangeRound([0, width])
               .domain(d3.extent(Array.from(stateDataMap.get(currentState).keys())));
-
       var yVals = d3.scaleLinear()
               .rangeRound([height, 0])
               .domain(d3.extent(Array.from(stateDataMap.get(currentState).values())));
-
-
       var leftYVals = d3.scaleLinear()
                 .rangeRound([height, 0])
                 .domain(d3.extent(cpiData, function(d) {return d.index;}));
-
       g.append("g")
        .attr("transform", "translate(0," + height + ")")
        .call(d3.axisBottom(xVals).tickFormat(d3.timeFormat("%Y")).ticks(5));
-
       g.append("g")
        .attr("stroke", "red")
        .call(d3.axisLeft(yVals));
-
       g.append("g")
         .attr("transform", "translate( " + width + ", 0 )")
         .attr("stroke", "blue")
         .call(d3.axisRight(leftYVals));
-
       var line = d3.line()
              .x(function(d) {return xVals(parseTime(d));})
              .y(function(d) {return yVals(Array.from(stateDataMap.get(currentState).values())[yearIndexMap.get(d)]);})
-
       var cpiLine = d3.line()
               .x(function(d) {return xVals(parseTime(d));})
               .y(function(d) {return leftYVals(cpiData[reverseYearIndexMap.get(d)].index);})
-
       g.append("path")
         .datum(years)
         .attr("class", "line")
         .attr("d", line)
         .attr("fill", "none")
         .attr("stroke", "red");
-
       g.append("path")
         .datum(years)
         .attr("class", "cpline")
         .attr("d", cpiLine)
         .attr("fill", "none")
         .attr("stroke", "blue");
-
        var sampleMap = stateDataMap.get(currentState);
        //console.log(sampleMap);
        //console.log(yearIndexMap);
        //console.log(Array.from(sampleMap.values())[yearIndexMap.get(2017)]);
-
        var arr = Array.from(stateDataMap.get(currentState).keys());
        //console.log(arr);
        var target = parseTime(2017);
@@ -1040,10 +933,8 @@ i
          .attr("cx", function(d) {return xVals(parseTime(d));})
          .attr("cy", function(d) {
                 return yVals(Array.from(stateDataMap.get(currentState).values())[yearIndexMap.get(d)])
-
          })
          .attr("r", 8);
-
        g.selectAll(".point")
         .data(years)
         .enter()
@@ -1054,11 +945,8 @@ i
           return leftYVals(cpiData[reverseYearIndexMap.get(d)].index);})
         .attr("r", 8);
     });
-
     });
-
 }
   </script>
-
     </body>
 </html>
