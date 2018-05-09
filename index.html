@@ -6,6 +6,7 @@
 
     <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
     <script src="https://d3js.org/topojson.v1.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   </head>
   <header>
       <h3 style="font-family: sans-serif; text-align: left;"><u>Can I afford to teach? Salaries as compared to living wage for U.S. Public School Teachers</u></h3>
@@ -29,19 +30,23 @@ time you select an individual state. The county maps only show the difference be
 and the view options allow you to select whether you are providing for just yourself, one child, or two children.
 The counties will then display in either blue or red, depending on affordability. If they heat map in blue, that means 
 they are not affordable to live in based on just one teacher's salary in that county. If they heat map in red, 
-that means they are affordable to live in based on just one teacher's salary in that county. 
+that means they are affordable to live in based on just one teacher's salary in that county. You may click on any county to see detailed
+information.
 </p>
 
 <p> When you click on an individual state, you will also see a graph displaying the changes between the Average 
-Teacher salary in that state versus the CPI in that state between 2013-2017. What this means is: LEAVE SPOT FOR 
-DAN TO EXPLAIN CPI HERE.</p
+Teacher salary in that state versus the CPI for 2013-2017. The CPI is the consumer price index, which measures changes
+in the cost of a fixed basket of consumer goods between years. An increase in CPI means that consumers are paying more
+for standard goods, while a decrease in CPI means a consumer is paying less. More about how to use the cpi can be found from the
+<a href="https://www.bls.gov/cpi/">Bureau of Labor Statistics</a>.</p>
 
-<p> Data was collected from the National Center for Education for teacher's salary data, MIT's Living Wage Data base
-for living wage data, and the St. Louis Federal Reserve for CPI data. We hope you find this tool helpful. Happy teaching!</p> 
+<p> Salaries were collected from the yearly digests of the <a href="nces.ed.gov/programs/digest/">National Center for Education</a>. Living wage data was collected from
+<a href="http://livingwage.mit.edu/">MIT's Living Wage Calculator </a>. CPI data is courtesy of the <a href="https://fred.stlouisfed.org/tags/series?t=annual%3Bcpi"> St. Louis Federal Reserve</a>. We hope you find this tool helpful. Happy teaching!</p> 
+<br>
 <style>
   	#graph{
-  		position: fixed;
-  		bottom: -160px;
+  		position: absolute;
+  		bottom: -575px;
   		right: -140px;
   	}
       .state-names {
@@ -51,13 +56,13 @@ for living wage data, and the St. Louis Federal Reserve for CPI data. We hope yo
           pointer-events: all;
       }
       .states {
-        stroke: white;
+        stroke: black;
         stroke-width: 2px;
         fill: none;
         pointer-events: all
       }
       .states :hover{
-        fill-opacity: .5;
+        fill: black;
         
       }
       /*From studio 5*/
@@ -141,6 +146,8 @@ for living wage data, and the St. Louis Federal Reserve for CPI data. We hope yo
   background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
   text-decoration: none;
 }
+
+i
   </style>
   <body>
 
@@ -166,6 +173,7 @@ for living wage data, and the St. Louis Federal Reserve for CPI data. We hope yo
         <div id="myModal1" class="modal">
           <div class="modal-content">
             <span class="close">&times;</span>
+            <h2><b>Configuration</b></h2>
         <p><b><u> Select data to color country map by: </u></b></p>
         <form id = "filter">
           <input  type='radio' id="Salary" name = "mode" value = "Salary" checked>Salary</input>
@@ -178,6 +186,10 @@ for living wage data, and the St. Louis Federal Reserve for CPI data. We hope yo
           <input type="radio" id="ONECHILD" name="ftype" value="ONECHILD">One Child Family</input>
           <input type="radio" id="TWOCHILD" name="ftype" value="TWOCHILD">Two Child Family</input>
         </form>
+
+        <p><b><u>You can also enter a custom salary filter. Any states below this salary will appear grey</u></b></p>
+        <input type="checkbox" id="customlimit" value="Custom Salary Minimum">Use Custom Minimum Salary</input>
+        <input type="text" id="numlimit" placeholder="50000" class="w3-input"></input>
       </div>
     </div>
 
@@ -249,6 +261,8 @@ for living wage data, and the St. Louis Federal Reserve for CPI data. We hope yo
         var span = document.getElementsByClassName("close")[0];
         var modal1 = document.getElementById('myModal1');
         var span1 = document.getElementsByClassName("close")[1];
+        var useCustomSalaryLimit = false;
+        var customSalaryLimit = 50000;
         document.getElementById("configure").addEventListener("click", function(){
           modal1.style.display = "block";
         });
@@ -261,10 +275,35 @@ for living wage data, and the St. Louis Federal Reserve for CPI data. We hope yo
         }
 
         window.onclick = function(event) {
+
           if (event.target == modal || event.target == modal1) {
                modal.style.display = "none";
+               modal1.style.display = "none";
           }
         } 
+
+        document.getElementById("numlimit").onkeyup = function(){
+          if (document.getElementById("customlimit").checked){
+            useCustomSalaryLimit = true;
+            var f1 = document.getElementById("filter");
+            customSalary = parseInt(document.getElementById("numlimit").value);
+            var event = new Event("change");
+            f1.dispatchEvent(event);
+          }
+
+        }
+
+        document.getElementById("customlimit").addEventListener("change", function(){
+          if (document.getElementById("customlimit").checked){
+            // do nothing
+          } else {
+            useCustomSalaryLimit = false;
+            var f1 = document.getElementById("filter");
+            var event = new Event("change");
+            f1.dispatchEvent(event);
+          }
+
+        });
           // Referenced Mike Bostock's exanple on bl.ocks
           var projection = d3.geoAlbersUsa()
               .scale(1000)
@@ -385,6 +424,17 @@ for living wage data, and the St. Louis Federal Reserve for CPI data. We hope yo
               }
             } 
             if (fill == undefined){ /*console.log(selectedState); //console.log(salary)*/ }
+
+            if (useCustomSalaryLimit){
+              console.log("using custom salary limit");
+              if (selectedState.Year_2017 < customSalary){
+                return "#3e423f";
+              } else {
+                return fill;
+              }
+
+            }
+
             return fill; 
         }); 
       });
@@ -918,8 +968,10 @@ for living wage data, and the St. Louis Federal Reserve for CPI data. We hope yo
                 .text("Salary");
 
               g.append("text")
-                .attr("x", 0 + chartWidth / 9.0)
+                .attr("x", 0 + 50)
                 .attr("y", 0-10)
+                .attr("font-size", "12px")
+                .attr("text-decoration", "underline")
                 .text("Average Salary v.s. CPI for " + state_name + " (2013-2017)");
 
       var xVals = d3.scaleTime()
